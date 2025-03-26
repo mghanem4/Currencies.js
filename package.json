@@ -1,0 +1,25 @@
+{
+  "name": "comp2406-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mghanem4/COMP2406-Project.git"
+  },
+  "author": "Mohammed Ghanem",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mghanem4/COMP2406-Project/issues"
+  },
+  "homepage": "https://github.com/mghanem4/COMP2406-Project#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1",
+    "sqlite3": "^5.1.7"
+  }
+}

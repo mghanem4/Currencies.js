@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Approval Requests</title>
+</head>
+<body>
+  <h1>Pending Approvals</h1>
+
+  {{#if users.length}}
+    <table border="1">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+
+      {{#each users}}
+        <tr>
+          <td>{{id}}</td>
+          <td>{{name}}</td>
+          <td>{{email}}</td>
+          <td>{{role}}</td>
+          <td>
+            <!-- Approve Button -->
+            <form action="/admin/approve" method="POST">
+              <input type="hidden" name="id" value="{{id}}">
+              <button type="submit">Approve</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+  {{else}}
+    <p>No pending approvals.</p>
+  {{/if}}
+
+  <!-- Back to Home Button -->
+  <button onclick="window.location.href='/'">Back to Home</button>
+</body>
+</html>
