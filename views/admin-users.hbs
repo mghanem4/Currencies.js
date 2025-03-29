@@ -1,0 +1,136 @@
+<h1 class="text-center">{{title}}</h1>
+
+<div class="row justify-content-center mt-4">
+  <div class="col-md-10">
+    <div class="card shadow">
+      <div class="card-header bg-danger text-white">
+        <h4>User Management</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Password Hash</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each users}}
+                <tr class="{{#if (eq userid ../currentUser)}}table-info{{/if}}">
+                  <td>{{userid}}</td>
+                  <td>
+                    <small class="text-muted font-monospace">{{password}}</small>
+                  </td>
+                  <td>
+                    <span class="badge {{#if (eq role 'admin')}}bg-danger{{else}}bg-primary{{/if}}">
+                      {{role}}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary edit-btn" data-username="{{userid}}">
+                      Edit
+                    </button>
+                    {{#unless (eq userid ../currentUser)}}
+                      <button class="btn btn-sm btn-outline-danger delete-btn" data-username="{{userid}}">
+                        Delete
+                      </button>
+                    {{/unless}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+          <button class="btn btn-success me-md-2" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-plus-circle"></i> Add User
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/admin" class="btn btn-secondary">Back to Admin Panel</a>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addUserForm">
+          <div class="mb-3">
+            <label for="newUsername" class="form-label">Username</label>
+            <input type="text" class="form-control" id="newUsername" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="newPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="newRole" class="form-label">Role</label>
+            <select class="form-select" id="newRole">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="saveUserBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="editUsername" class="form-label">Username</label>
+          <input type="text" class="form-control" id="editUsername" required>
+        </div>
+        <div class="mb-3">
+          <label for="editPassword" class="form-label">New Password (leave blank to keep current)</label>
+          <input type="password" class="form-control" id="editPassword">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+<!-- Include the JavaScript file -->
+<script src="/admin-users.js" defer></script>
+
+<style>
+  .font-monospace {
+    font-family: monospace;
+  }
+  .badge {
+    font-size: 0.85em;
+  }
+</style>

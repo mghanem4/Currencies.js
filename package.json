@@ -1,8 +1,8 @@
 {
   "name": "comp2406-project",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Currency tracker",
+  "main": "server.js",
   "scripts": {
     "test": "node server.js"
   },
@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/mghanem4/COMP2406-Project#readme",
   "dependencies": {
-    "body-parser": "^1.20.3",
     "express": "^4.21.2",
-    "express-handlebars": "^8.0.1",
-    "sqlite3": "^5.1.7"
+    "hbs": "^4.2.0",
+    "sqlite3": "^5.1.7",
+    "morgan": "^1.10.0"
   }
 }

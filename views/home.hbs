@@ -1,0 +1,22 @@
+<h1 class="text-center">{{title}}</h1>
+
+<div class="row justify-content-center mt-4">
+  <div class="col-md-6">
+    <form action="/exchange-rate" method="GET">
+      <div class="mb-3">
+        <label for="baseCurrency" class="form-label">Select Base Currency:</label>
+        <select class="form-select" id="baseCurrency" name="base" required>
+          {{#each currencies}}
+            <option value="{{this.code}}">{{this.code}} - {{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Show Exchange Rates</button>
+        {{#if isAdmin}}
+          <a href="/admin" class="btn btn-danger ms-2">Admin Panel</a>
+        {{/if}}
+      </div>
+    </form>
+  </div>
+</div>
