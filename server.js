@@ -14,7 +14,7 @@ function hashPassword(password) {
 const app = express();
 const port = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.json());  // For parsing application/json
 // Set up hbs as the view engine
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -125,7 +125,14 @@ app.post('/admin/users/delete', (req, res) => {
     });
   });
   // Update user route
-  app.post('/admin/users/update', (req, res) => {
+  app.post('/admin/users', (req, res) => {
+        // Check for valid JSON body
+        if (!req.body || typeof req.body !== 'object') {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid request body" 
+            });
+        }
     // Verify admin role
     if (req.user.role !== 'admin') {
         return res.status(403).json({ success: false, message: "Forbidden" });
@@ -197,8 +204,137 @@ app.post('/admin/users/delete', (req, res) => {
                 message: "User updated successfully"
             });
         });
+        logAudit(
+            req, 
+            'USER_UPDATE', 
+            'users', 
+            req.body.oldUsername,
+            oldUser,
+            { 
+                username: req.body.newUsername, 
+                role: oldUser.role 
+            }
+        );
     }
 });
+
+// Create user route
+app.post('/admin/users', (req, res) => {
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+        return res.status(400).json({ 
+            success: false, 
+            message: "Invalid request body" 
+        });
+    }
+
+    // Verify admin role
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ 
+            success: false, 
+            message: "Forbidden" 
+        });
+    }
+
+    const { username, password, role } = req.body;
+
+    // Input validation
+    if (!username || username.length < 3) {
+        return res.status(400).json({ 
+            success: false, 
+            message: "Username must be at least 3 characters" 
+        });
+    }
+
+    if (!password || password.length < 8) {
+        return res.status(400).json({ 
+            success: false, 
+            message: "Password must be at least 8 characters" 
+        });
+    }
+
+    if (!['admin', 'user'].includes(role)) {
+        return res.status(400).json({ 
+            success: false, 
+            message: "Invalid role specified" 
+        });
+    }
+
+    // Check if username exists
+    db.get("SELECT userid FROM users WHERE userid = ?", [username], (err, row) => {
+        if (err) {
+            console.error('Check username error:', err);
+            return res.status(500).json({ 
+                success: false, 
+                message: "Database error" 
+            });
+        }
+
+        if (row) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Username already exists" 
+            });
+        }
+        // Hash password and create user
+        const hashedPassword = hashPassword(password);
+        
+        db.run(
+            "INSERT INTO users (userid, password, role) VALUES (?, ?, ?)",
+            [username, hashedPassword, role],
+            function(err) {
+                if (err) {
+                    console.error('Create user error:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        message: "Failed to create user" 
+                    });
+                }
+
+                // Audit log entry
+                logAudit(
+                    req,
+                    'USER_CREATE',
+                    'users',
+                    username,
+                    null, // No old values
+                    { username, role }
+                );
+
+                res.json({ 
+                    success: true,
+                    message: "User created successfully",
+                    userId: username
+                });
+            }
+        );
+    });
+});
+
+// Audit logging function (reusable)
+function logAudit(req, actionType, targetEntity, targetId, oldValues, newValues) {
+    db.run(
+        `INSERT INTO audit_logs 
+        (timestamp, user_id, action_type, target_entity, target_id, 
+         ip_address, user_agent, old_values, new_values, status)
+        VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            req.user.userid,
+            actionType,
+            targetEntity,
+            targetId,
+            req.ip,
+            req.get('User-Agent'),
+            JSON.stringify(oldValues),
+            JSON.stringify(newValues),
+            'SUCCESS'
+        ],
+        (err) => {
+            if (err) console.error('Audit log error:', err);
+        }
+    );
+}
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

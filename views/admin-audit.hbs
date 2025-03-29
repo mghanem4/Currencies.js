@@ -1,0 +1,30 @@
+<!-- admin-audit.hbs -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Admin</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each logs}}
+        <tr class="{{#if (eq status 'FAILED')}}table-danger{{/if}}">
+            <td>{{formatDate timestamp}}</td>
+            <td>{{user_id}}</td>
+            <td>{{action_type}}</td>
+            <td>{{target_entity}} ({{target_id}})</td>
+            <td>
+                <button class="btn btn-sm btn-info" data-bs-toggle="collapse" 
+                    data-bs-target="#details-{{@index}}">Details</button>
+                <div id="details-{{@index}}" class="collapse">
+                    <pre>Old: {{old_values}}\nNew: {{new_values}}</pre>
+                    <small class="text-muted">{{ip_address}} via {{user_agent}}</small>
+                </div>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

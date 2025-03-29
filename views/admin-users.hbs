@@ -71,15 +71,17 @@
         <form id="addUserForm">
           <div class="mb-3">
             <label for="newUsername" class="form-label">Username</label>
-            <input type="text" class="form-control" id="newUsername" required>
+            <input type="text" class="form-control" id="newUsername" required minlength="3">
+            <div class="invalid-feedback">Username must be at least 3 characters</div>
           </div>
           <div class="mb-3">
             <label for="newPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="newPassword" required>
+            <input type="password" class="form-control" id="newPassword" required minlength="8">
+            <div class="invalid-feedback">Password must be at least 8 characters</div>
           </div>
           <div class="mb-3">
             <label for="newRole" class="form-label">Role</label>
-            <select class="form-select" id="newRole">
+            <select class="form-select" id="newRole" required>
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
@@ -88,7 +90,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveUserBtn">Save</button>
+        <button type="submit" class="btn btn-primary" id="saveUserBtn">Save</button>
       </div>
     </div>
   </div>
